@@ -1,2 +1,2 @@
-# GeoDev at UTD lightning talk for GeoDev Meetup 2015 
+# Eigenvector Spatial Filtering talk for SciPy 2015
 
