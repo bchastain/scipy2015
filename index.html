@@ -4,9 +4,9 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>GeoDev at UTD</title>
+		<title>Eigenvector Spatial Filtering</title>
 
-		<meta name="description" content="Lightning talk for GeoDev Meetup talking about projects at UTD">
+		<meta name="description" content="Eigenvector Spatial Filtering talk for SciPy 2015">
 		<meta name="author" content="Bryan Chastain">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -19,6 +19,7 @@
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="plugin/title-footer/title-footer.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -33,16 +34,14 @@
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
 	</head>
-
 	<body>
 
 		<div class="reveal">
-
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h1>GeoDev at UTD</h1>
-					<h3></h3>
+					<h2>Eigenvector Spatial Filtering</h2>
+					<h4>Using NumPy and ArcGIS</h4>
 					<p>
 						<small>Bryan Chastain, Ph.D.</small><br>
 						<small><a href="http://www.utdallas.edu/epps/gis/">Geospatial Information Sciences</a></small><br>
@@ -53,87 +52,306 @@
 				<!-- Example of nested vertical slides -->
 				<section>
 					<section>
-						<h2>UTD: EDC</h2>
-						<p>UTD GIS Program now an official Esri Development Center (EDC)</p>
+						<h2>The Problem...</h2>
 					</section>
 					<section>
-						<h2>EDC</h2>
-						<p>Special status for select universities who challenge their students to develop innovative geospatial applications.</p>
-						<img data-src="http://blogs.esri.com/esri/gisedcom/files/2014/04/edc-logo.png">
+						<p>Linear models such as OLS are very popular, but they do have certain requirements:</p>
+						<p><i><b>i.i.d.</b></i></p>
 					</section>
 					<section>
-						<h2>EDC</h2>
-						<p>Students at EDC programs gain special access to Esri software and have opportunities to be recognized for their accomplishments.</p>
-					</section>
-					<section>
-						<h2>UTD: EDC</h2>
-						<p>Although just joined, already active in the program.</p>
-						<p>Students already competing for international recognition.</p>
+						<h2>Spatial Autocorrelation (SA)</h2>
+						<p>If model residuals are spatially dependent, then potential for specification error.</p>
+						<div style='background:white;'><img data-src="http://www.udel.edu/johnmack/frec682/red_state_blue_state/resids.png"></div>
 					</section>
 				</section>
 				
 				
 				<section>
 					<section>
-						<h2>My Projects</h2>
-						<p>A few GeoDev-related projects</p>
-					</section>
-					<section data-background="dam.png">
-						<h2>iSIM</h2>
-						<pre><code style="word-wrap: break-word;">Python-based software for creating dam inundation maps for local govt    emergency planning.</code></pre>
+						<h2>How to control for SA?</h2>
 					</section>
 					<section>
-						<h2>Campus Mapping</h2>
-						<p>Automating a solution for Facilities CAD to GIS integration.</p>
-						<img data-src="ssb.png">
+						<h2>Geographically Weighted Regression</h2>
+						<ul>
+							<li>Technique to indicate where locally weighted regression coefficients move away from global values</li>
+							<li>Simple to use and employed widely (ArcGIS, R, etc.)</li>
+							<li>Unfortunately, better used as an exploratory tool (Wheeler &amp; Tiefelsdorf, 2005):</li>
+							<small><ul>
+								<li><i>"...not a formal model to infer parameter nonstationarity"</i></li>
+								<li>Large spatial variation in estimated coefficients and correlation between estimated coefficients for pairs of regression terms is inherent</li>
+							</ul></small>
+						</ul>
+						<img data-src="https://desktop.arcgis.com/en/desktop/latest/tools/spatial-statistics-toolbox/GUID-2C0DC6C8-B6AA-41C9-A8DC-277FE927AD40-web.png">
 					</section>
 					<section>
-						<h2>SciPy Tinkering</h2>
-						<p>Currently working on porting spatial statistics models from <i>R</i> to SciPy.</p>
-						<p>Will present at <a href="http://scipy2015.scipy.org/">SciPy2015</a> in Austin.</p>
-						<img data-src="scipy.png">
+						<h2>Others</h2>
+						<ul>
+							<li>Spatial Autoregressive models (CAR/SAR)</li>
+							<li>GLM/GLMM</li>
+							<li>Bayesian Spatially Varying Coefficients</li>
+							<li>many more</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Eigenvector Spatial Filtering</h2>
+						<ul>
+							<li>Shown to be unbiased, efficient and consistent estimator for linear regression <small>(Chun and Griffith, 2014)</small></li>
+							<li>Often outperforms many of these other techniques</li>
+						</ul>
 					</section>
 				</section>
 				
 				
 				<section>
 					<section>
-						<h2>Student Projects</h2>
-						<p>Very small sample of what students are developing now</p>
+						<h2>How does ESF work?</h2>
+						<p>variables split into spatial and non-spatial components, which can then be employed in OLS framework</p>
 					</section>
 					<section>
-						<h2>LiDAR Point Cloud Classification</h2>
-						<p>Uses segmentation method and CUDA parallel processing.</p>
-						<p>by Feng Ni</p>
-						<img data-src="lidarunclass.png"><img data-src="lidarclass.png">
+						<h2>Spatial Weights Matrix</h2>
+						<ul>
+							<li>Binary matrix constructed based on connectivity (rook/queen), distance, etc.</li>
+							<li>Alternative forms:</li>
+							<ul>
+								<li>Row-standardized</li>
+								<li>Double-standardized</li>
+								<li>Variance-stabilizing</li>
+							</ul>
+						</ul>
+						<img style="position: absolute;top: 50%;left: 50%;margin-right: -50%;" data-src="https://desktop.arcgis.com/en/desktop/latest/tools/spatial-statistics-toolbox/GUID-A772FE33-6EE7-4B45-A654-A3C73235E9A2-web.gif">
 					</section>
 					<section>
-						<h2>Bivariate Mapping Techniques</h2>
-						<p>How to display two variables at once?</p>
-						<p>ArcEngine, .NET, and <i>R</i></p>
-						<p>by Hyeongmo Koo</p>
-						<img data-src="bivariate.png">
+						<h2>Eigenfunction decomposition</h2>
+						<p>$$MCM = (I - 11^T/n) C (I - 11^T/n)$$</p>
+						<ul>
+							<li>Pre- and post-multiplying (projection matrix) causes first eigenfunction of <b>C</b> to be replaced with constant vector and zero eigenvalue</li>
+							<li style="color:green;"><b>The eigenvectors represent all of the distinct (uncorrelated) spatial autocorrelation map patterns</b></li>
+						</ul>
 					</section>
 					<section>
-						<h2>Simulating Alzheimer Patient Movement</h2>
-						<p>Using Java agent-based modelling to gain a better understanding of the movements of cognitively impaired pedestrians</p>
-						<p>by Amir Najian</p>
-						<img data-src="abm.png">
+						<h2>The semi-parametric form</h2>
+						<ul>
+							<li>ESF formulations exist for non-linear models (Poisson, logistic, etc.), but in linear regression, eigenvectors have property of being mutually orthogonal</li>
+							<li>Therefore, stepwise forward/backward selections lead to identical sets</li>
+							<li>Eigenvectors are added to the model until remaining spatial autocorrelation falls below a specified threshold</li>
+						</ul>
 					</section>
 					<section>
-						<h2>Drone Image Georeferencing</h2>
-						<p>Developing a method for automatically georeferencing imagery captured from drones.</p>
-						<p>by Randall Morris</p>
-						<img data-src="uav.jpg">
+						<h2>Implementations</h2>
+						<ul>
+							<li>SAS</li>
+							<li>R</li>
+							<ul>
+								<li>SpatialFiltering() function in spdep package</li>
+								<li>Semi-parametric ESF</li>
+							</ul>
+							<li class="fragment highlight-red"><i><u>None for Python or GIS (e.g. ArcGIS, QGIS)</u></i></li>
+						</ul>
 					</section>
 				</section>
-
+				<section>
+					<section>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<h2>ESF with NumPy</h2>
+						<p>ported from <i>SpatialFiltering()</i> function from <i>R</i> <b>spdep</b> library</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p><small><small>&copy; 2005 Michael Tiefelsdorf, Yongwan Chun and Roger Bivand and distributed under the terms of the GNU General Public License, version 2</small></small></p>
+					</section>
+					<section>
+						<h2>Function Definition</h2>
+						<pre><code data-trim class="python">
+def spatialfiltering(
+        dependent_var, independent_vars, spatial_lag_vars,
+        data, neighbor_list, style="d", zero_policy=False,
+        tolerance=0.1, zero_value=0.0001, exact_EV=False,
+        symmetric=True, alpha=None, alternative="two.sided",
+        verbose=False):
+						</code></pre>
+					</section>
+					<section>
+						<h2>Parameters</h2>
+						<pre><code data-trim class="python">
+    """Parameters
+    ----------
+    dependent_var : str
+        Name of the response variable column in dataset
+    independent_vars : list of str
+        Names of indep. variable columns
+    spatial_lag_vars : list of str
+            Names of lagged variabled columns
+    data : str
+        Filename of dataset (.dbf)
+    neighbor_list : str
+        Filename of neighbor list file (.gal)
+    style : str
+        Style of spatial weights coding to be used - r=row-standardized,
+        d=double standardized, b=binary, v=variance stabilized
+						</code></pre>
+					</section>
+					<section>
+						<h2>Parameters</h2>
+						<pre><code data-trim class="python">
+    """Parameters
+    ----------
+    zero_policy : bool
+        If False, stop with error for any empty neighbor sets, if True
+        permit the weights list to be formed with zero-length weights
+        vectors
+    tolerance : float
+            Tolerance value for convergence of spatial filtering
+    zero_value : float
+        Eigenvectors with eigenvalues of an absolute value smaller than
+        zero_value will be excluded in eigenvector search
+    exact_EV : bool
+        Set exact_EV=True to use exact expectations and variances rather 
+        than the expectation and variance of Moran's I from the previous 
+        iteration
+						</code></pre>
+					</section>
+					<section>
+						<h2>Parameters</h2>
+						<pre><code data-trim class="python">
+    """Parameters
+    ----------
+    symmetric : bool
+        If True, spatial weights matrix forced to symmetry
+    alpha : float
+        If not None, used instead of the tolerance argument as a 
+        stopping rule to choose all eigenvectors up to and including the 
+        one with a probability value exceeding alpha.
+    alternative : str
+        String for specifying alternative hypothesis - "greater", "less" 
+        or "two.sided"
+    verbose : bool
+        If True, reports update on eigenvector selection during the
+        brute-force search.
+						</code></pre>
+					</section>
+					<section>
+						<h2>Outputs</h2>
+						<pre><code data-trim class="python">
+    """Returns
+    -------
+    out, selVec : tuple of numpy.matrix
+        A numpy matrix summary table of the selection process as
+        well as a numpy matrix of the final selected eigenvectors. 
+    The summary table includes the following columns:
+        Step: Step counter of the selection procedure
+        SelEvec: number of selected eigenvector (sorted descending)
+        Eval: its associated eigenvalue
+        MinMi: value Moran's I for residual autocorrelation
+        ZMinMi: standardized value of Moran's I assuming a normal dist.
+        pr(ZI): probability value of the permutation-based
+        	deviate for the given value of the alternative argument
+        R2: R^2 of the model including exogenous variables and
+        	eigenvectors
+        gamma: regression coefficient of selected eigenvector in fit
+						</code></pre>
+					</section>
+					<section>
+						<h2>Example</h2>
+						<pre><code data-trim class="python">
+>>> neighbor_list = pysal.examples.get_path("columbus.gal")
+>>> data = pysal.examples.get_path("columbus.dbf")
+>>> dependent_var = "CRIME"
+>>> independent_vars = ["INC", "HOVAL"]
+>>> style = "r"
+>>> out, selVec = spatialfiltering(
+>>>     dependent_var, independent_vars, data, neighbor_list, style
+>>> )
+>>> print np.array_str(np.array(out))
+    Step    SelEvec Eval    MinMi   ZMinMi  Pr(ZI)  R2     tgamma
+[[  0.      0.      0.      0.222   2.839   0.005   0.552   0.   ]
+ [  1.      5.      0.706   0.126   1.971   0.049   0.627 -31.624]
+ [  2.      3.      0.84    0.058   1.485   0.138   0.659  20.777]
+ [  3.      1.      1.004  -0.021   0.906   0.365   0.685  18.88 ]
+ [  4.     10.      0.341  -0.073   0.395   0.693   0.725 -22.972]
+ [  5.     14.      0.188  -0.116  -0.045   0.964   0.764 -22.941]]
+						</code></pre>
+					</section>
+					<section data-background="esf-v1.png">
+						<h2>Selected Eigenvector Map (#1)</h2>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>ESF in ArcGIS</h2>
+					</section>
+					<section>
+						<h2>Tool GUI</h2>
+						<p>Includes option to output feature layer joined with eigenvector table</p>
+					</section>
+					<section data-background-video="esf-demo.mp4">
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>How does it compare?</h2>
+					</section>
+					<section>
+						<h2>Processing time vs <i>R</i></h2>
+						<table>
+							<thead>
+								<tr>
+									<td>Study Area</td>
+									<td># obs</td>
+									<td>RRO (s)</td>
+									<td>NumPy (s)</td>
+									<td>%</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>US Health Region</td>
+									<td>508</td>
+									<td>3.52</td>
+									<td><b>1.78</b></td>
+									<td><b style="color:green;">49.4%</b></td>
+								</tr>
+								<tr>
+									<td>OR Census Tracts</td>
+									<td>834</td>
+									<td>22.5</td>
+									<td><b>13.4</b></td>
+									<td><b style="color:green;">40.4%</b></td>
+								</tr>
+								<tr>
+									<td>CO Census Tracts</td>
+									<td>1249</td>
+									<td>81.5</td>
+									<td><b>56.7</b></td>
+									<td><b style="color:green;">30.4%</b></td>
+								</tr>
+							</tbody>
+						</table><br>
+						<small>Revolution R Open v8.0.2 vs Anaconda Python v2.2.0</small><br>	
+						<small>Core i7-4770 16GB RAM on Windows 7</small>
+					</section>
+				</section>
+				<section>
+					<h2>Future</h2>
+					<p>Python 3</p>
+					<p>ArcGIS Pro</p>
+					<p>QGIS</p>
+					<p>Non-linear ESF</p>
+					<img style="background-color:white; position: absolute;top: 10%;left: 70%;margin-right: -10%;"data-src="http://docs.pylonsproject.org/projects/pyramid/en/1.3-branch/_images/python-3.png">
+					<img style="position: absolute;top: 40%;left: 80%;margin-right: -10%;"data-src="https://avatars0.githubusercontent.com/u/8226804?v=3&s=460" height="100" width="100">
+					<img style="position: absolute;top: 50%;left: 10%;margin-right: -50%;"data-src="http://smallwatersupply.org/Portals/0/300px-QGis_Logo.png" height="100" width="100">
+				</section>
+				<section>
+					<h2>Special Thanks</h2>
+					<p>Yongwan Chun</p>
+					<p>Michael Tiefelsdorf</p>
+				</section>
 				<section>
 					<h2>Want to learn more?</h2>
 					<p>Want to be informed about UTD GIS events (GIS Day, colloquia, research, etc.)?</p>
 					<p>E-mail <a>chastain@utdallas.edu</a></p>
-					<img data-src="http://www.utdallas.edu/epps/images/griffith-teaching-gis-1.jpg">
-					<p><small>Slides: <a href="http://bchastain.github.io/geodev2015">http://bchastain.github.io/geodev2015<a></small></p>
+					<img data-src="http://www.utdallas.edu/websvcs/templates/05/common/images/UTDlogo.gif">
 				</section>
 
 			</div>
@@ -162,7 +380,10 @@
 					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'js/mymath.js', async: true },
+					{ src: 'plugin/title-footer/title-footer.js', async: true,  callback: function() {
+                    	title_footer.initialize(title="Slides: <a href='http://bchastain.github.io/scipy2015'>bchastain.github.io/scipy2015</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Code: <a href='https://github.com/bchastain/esf'>github.com/bchastain/esf</a>"); } }
 				]
 			});
 
